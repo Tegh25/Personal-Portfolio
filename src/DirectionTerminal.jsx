@@ -266,12 +266,14 @@ function ContactBlock({ links }) {
     <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '8px 20px', fontSize: 13 }}>
       <span style={termStyles.key}>linkedin:</span>
       <a href={`https://${links.linkedin}`} target="_blank" style={{ color: '#82aaff', textDecoration: 'none' }}>{links.linkedin}</a>
-      <span style={termStyles.key}>email:</span>
-      <span style={{ color: '#ccc' }}>{links.email}</span>
+      <span style={termStyles.key}>github:</span>
+      <a href={`https://${links.github}`} target="_blank" style={{ color: '#82aaff', textDecoration: 'none' }}>{links.github}</a>
+      <span style={termStyles.key}>x:</span>
+      <a href={`https://${links.x}`} target="_blank" style={{ color: '#82aaff', textDecoration: 'none' }}>{links.x}</a>
       <span style={termStyles.key}>location:</span>
       <span style={{ color: '#ccc' }}>{links.location}</span>
       <span style={termStyles.key}>status:</span>
-      <span style={{ color: '#00ff9c' }}>◉ available for 2026 co-op / new grad</span>
+      <span style={{ color: '#00ff9c' }}>◉ available for summer 2027 co-op / internships</span>
     </div>
   );
 }

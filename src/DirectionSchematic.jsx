@@ -536,9 +536,10 @@ function ScSkillsBus({ data }) {
 function ScContact({ data }) {
   const ports = [
     { name: 'LINKEDIN', val: data.links.linkedin, color: '#60a5fa' },
-    { name: 'EMAIL', val: data.links.email, color: '#34d399' },
+    { name: 'X', val: data.links.x, color: '#a0a0a8' },
+    { name: 'GITHUB', val: data.links.github, color: '#9a96d4' },
     { name: 'LOC', val: data.links.location, color: '#fbbf24' },
-    { name: 'STATUS', val: '◉ available for 2026', color: '#f472b6' },
+    { name: 'STATUS', val: '◉ available for 2027', color: '#f472b6' },
   ];
   return (
     <div style={{ ...scStyles.chip, padding: 0 }}>

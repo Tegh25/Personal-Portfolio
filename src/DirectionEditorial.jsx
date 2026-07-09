@@ -503,12 +503,14 @@ function EdColophon({ data }) {
         <div style={{ fontSize: 14, marginBottom: 6 }}>
           <span style={{ color: '#f4f0e7aa' }}>LinkedIn</span><br />
           <a href={`https://${data.links.linkedin}`} target="_blank" style={{ color: '#f4f0e7', textDecoration: 'underline' }}>
-            /in/teghveerateliey
+            @teghveerateliey
           </a>
         </div>
         <div style={{ fontSize: 14, marginTop: 14 }}>
-          <span style={{ color: '#f4f0e7aa' }}>Email</span><br />
-          {data.links.email}
+          <span style={{ color: '#f4f0e7aa' }}>X</span><br />
+          <a href={`https://${data.links.x}`} target="_blank" style={{ color: '#f4f0e7', textDecoration: 'underline' }}>
+            @Tegh25
+          </a>
         </div>
       </div>
       <div>

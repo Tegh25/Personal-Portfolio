@@ -14,8 +14,9 @@ const RESUME = {
   ],
   links: {
     linkedin: 'linkedin.com/in/teghveerateliey',
-    email: 'teghveer@example.com',
-    location: 'GTA, Canada',
+    x: 'x.com/Tegh25',
+    github: 'github.com/Tegh25',
+    location: 'Toronto, Canada',
   },
   topSkills: ['C', 'C++', 'VHDL', 'Python', 'Linux', 'FreeRTOS'],
   languages: [
