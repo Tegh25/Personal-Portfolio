@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teghveer Singh Ateliey — Portfolio Explorations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: #0a0a0a; }
+  body { font-family: 'Space Grotesk', system-ui, sans-serif; color: #f0f0f0; }
+
+  /* Top chrome — the meta-UI for choosing directions */
+  .meta-bar {
+    position: fixed; top: 0; left: 0; right: 0; height: 52px; z-index: 100;
+    background: rgba(10,10,10,0.88); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; padding: 0 20px; gap: 24px;
+  }
+  .meta-brand {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.04em;
+    color: #888; display: flex; align-items: center; gap: 10px;
+  }
+  .meta-brand .dot {
+    width: 8px; height: 8px; background: #00ff9c; border-radius: 50%;
+    box-shadow: 0 0 8px #00ff9c;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .direction-tabs { display: flex; gap: 4px; margin-left: auto; }
+  .direction-tabs button {
+    background: transparent; border: 1px solid transparent; color: #888;
+    padding: 7px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
+    border-radius: 4px; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+  }
+  .direction-tabs button:hover { color: #fff; background: rgba(255,255,255,0.04); }
+  .direction-tabs button.active { color: #fff; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); }
+  .direction-tabs button .num { opacity: 0.4; font-size: 10px; }
+
+  .view-tabs {
+    position: fixed; top: 52px; left: 0; right: 0; height: 40px; z-index: 99;
+    background: rgba(10,10,10,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; padding: 0 20px; gap: 0;
+  }
+  .view-tabs .label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: #555; letter-spacing: 0.1em; text-transform: uppercase; margin-right: 16px;
+  }
+  .view-tabs button {
+    background: transparent; border: none; color: #666;
+    padding: 8px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    cursor: pointer; transition: color 0.2s; position: relative;
+  }
+  .view-tabs button:hover { color: #aaa; }
+  .view-tabs button.active { color: #fff; }
+  .view-tabs button.active::after {
+    content: ''; position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px; background: #fff;
+  }
+
+  .stage {
+    position: absolute; top: 92px; left: 0; right: 0; bottom: 0;
+    overflow: auto; overflow-x: hidden;
+  }
+  /* Hide scrollbar for cleaner look but keep it functional */
+  .stage::-webkit-scrollbar { width: 10px; }
+  .stage::-webkit-scrollbar-track { background: transparent; }
+  .stage::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 5px; }
+  .stage::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+  .boot {
+    position: fixed; inset: 0; background: #0a0a0a; z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; color: #00ff9c; font-size: 12px;
+    transition: opacity 0.4s; pointer-events: none;
+  }
+  .boot.gone { opacity: 0; }
+
+  /* ─── MOBILE OVERRIDES ───────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .meta-bar { padding: 0 12px; gap: 12px; height: 48px; }
+    .meta-brand span:not(.dot) { font-size: 10px; }
+    .meta-brand > span:nth-child(3),
+    .meta-brand > span:nth-child(4) { display: none; }
+    .direction-tabs { gap: 2px; }
+    .direction-tabs button { padding: 6px 8px; font-size: 10px; }
+    .direction-tabs button .num { display: none; }
+    .view-tabs { top: 48px; padding: 0 10px; height: 38px; overflow-x: auto; white-space: nowrap; }
+    .view-tabs::-webkit-scrollbar { display: none; }
+    .view-tabs .label { display: none; }
+    .view-tabs button { padding: 8px 10px; font-size: 10px; flex-shrink: 0; }
+    .stage { top: 86px; }
+
+    /* Force all grids to single column on mobile */
+    .stage [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+    /* Containers: reduce padding */
+    .stage [style*="max-width: 1120px"],
+    .stage [style*="max-width: 1100px"],
+    .stage [style*="max-width: 1280px"],
+    .stage [style*="max-width: 1200px"],
+    .stage [style*="max-width: 900px"],
+    .stage [style*="max-width: 1000px"] { padding-left: 16px !important; padding-right: 16px !important; padding-top: 28px !important; }
+
+    /* Editorial masthead row — keep side-by-side but shrink */
+    .ed-masthead-row { grid-template-columns: 1fr !important; gap: 8px !important; }
+    .ed-cover-eyebrow { flex-wrap: wrap !important; gap: 8px !important; }
+    .case-tabs-row { flex-wrap: wrap !important; }
+    .case-tabs-row > button { flex: 1 1 45% !important; min-width: 140px !important; }
+    .case-pixel-icon { display: none !important; }
+
+    /* Case tabs row: scroll horizontally instead of squishing */
+    .case-tabs-row { overflow-x: auto; flex-wrap: nowrap !important; }
+    .case-tabs-row button { flex-shrink: 0; }
+
+    /* Terminal packet table — hide low-value columns */
+    .pkt-row { grid-template-columns: 40px 80px 1fr 60px !important; font-size: 10px !important; }
+    .pkt-row > :nth-child(3), .pkt-row > :nth-child(4) { display: none; }
+
+    /* Schematic title bar: stack */
+    .sch-titlebar { grid-template-columns: 1fr !important; }
+    .sch-titlebar > div { text-align: left !important; border-left: none !important; }
+
+    /* Reduce giant hero sizes further */
+    h1 { letter-spacing: -0.02em !important; }
+
+    /* SVGs stay responsive; just cap min size */
+    svg { max-width: 100%; height: auto; }
+
+    /* Flex rows that need to wrap on mobile */
+    .wrap-on-mobile { flex-wrap: wrap !important; gap: 16px !important; }
+
+    /* Editorial columns (article body) */
+    [style*="columns: 2"] { columns: 1 !important; }
+  }
+
+  @media (max-width: 520px) {
+    .meta-brand > span:nth-child(2) { font-size: 9px; }
+    .direction-tabs button { padding: 5px 7px; font-size: 9px; letter-spacing: 0.04em; }
+    .stage [style*="padding: 40px"] { padding: 20px 14px !important; }
+    .stage [style*="padding: 64px"] { padding: 24px 14px !important; }
+    .stage [style*="padding: 32px"] { padding: 20px 16px !important; }
+    .stage [style*="padding: 28px 32px"] { padding: 18px 16px !important; }
+    .stage [style*="padding: 48px"] { padding: 24px 16px !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="boot" id="boot">loading portfolio explorations...</div>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="src/data.jsx"></script>
+  <script type="text/babel" src="src/PixelArt.jsx"></script>
+  <script type="text/babel" src="src/DirectionTerminal.jsx"></script>
+  <script type="text/babel" src="src/DirectionEditorial.jsx"></script>
+  <script type="text/babel" src="src/DirectionSchematic.jsx"></script>
+  <script type="text/babel" src="src/App.jsx"></script>
+</body>
+</html>
