@@ -128,7 +128,7 @@ const RESUME = {
       stack: ['GraphQL', 'React', 'react-bootstrap', 'REST', 'Agile'],
       metrics: [
         { value: '2', label: 'primary APIs touched' },
-        { value: '1', label: 'microapp shipped' },
+        { value: '3', label: 'microapps shipped' },
       ],
       impact: [
         'Crafted GraphQL POST request query to obtain party information for US-branch customers.',
