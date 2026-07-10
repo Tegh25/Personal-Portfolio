@@ -194,6 +194,103 @@ function SchematicMeter({ tick }) {
   );
 }
 
+// Decorative honors decoder — fills credentials column with on-theme schematic art
+function HonorsSignalMap({ count }) {
+  const [tick, setTick] = useStateS(0);
+  useEffectS(() => {
+    const id = setInterval(() => setTick(t => t + 1), 700);
+    return () => clearInterval(id);
+  }, []);
+
+  const categories = [
+    { label: 'NATIONAL', bars: 2, color: '#fbbf24' },
+    { label: 'ACADEMIC', bars: 3, color: '#60a5fa' },
+    { label: 'SCHOLARSHIP', bars: 4, color: '#34d399' },
+    { label: 'LEADERSHIP', bars: 2, color: '#c084fc' },
+  ];
+
+  const scanIdx = tick % count;
+
+  return (
+    <div style={{ ...scStyles.chip, position: 'relative', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+      <CornerMarks />
+      <div style={scStyles.chipHead}>// honor_decoder · U_HONORS</div>
+      <svg viewBox="0 0 460 248" style={{ width: '100%', height: 'auto', display: 'block', flex: 1 }}>
+        {/* input bus */}
+        <line x1="20" y1="48" x2="128" y2="48" stroke="#475569" strokeWidth="1" />
+        <text x="20" y="38" style={{ ...scStyles.mono, fontSize: 8, fill: '#64748b', letterSpacing: '0.1em' }}>
+          AWARD[{count - 1}:0]
+        </text>
+        <polygon points="128,44 136,48 128,52" fill="#60a5fa" opacity="0.7" />
+
+        {/* IC body */}
+        <rect x="136" y="24" width="158" height="88" fill="#0b1322" stroke="#fbbf24" strokeWidth="1" />
+        <rect x="142" y="30" width="146" height="76" fill="none" stroke="#1e293b" strokeWidth="0.4" />
+        <text x="215" y="58" textAnchor="middle" style={{ ...scStyles.mono, fontSize: 13, fill: '#fbbf24', letterSpacing: '0.14em', fontWeight: 600 }}>
+          U_HONORS
+        </text>
+        <text x="215" y="76" textAnchor="middle" style={{ ...scStyles.mono, fontSize: 9, fill: '#64748b', letterSpacing: '0.1em' }}>
+          @ 0x0500 · DECODER
+        </text>
+        <text x="215" y="94" textAnchor="middle" style={{ ...scStyles.mono, fontSize: 8, fill: '#475569' }}>
+          WIDTH={count} · ACTIVE-HI
+        </text>
+
+        {/* output bus to LEDs */}
+        <line x1="294" y1="48" x2="332" y2="48" stroke="#475569" strokeWidth="1" />
+        {Array.from({ length: count }).map((_, i) => {
+          const row = Math.floor(i / 5);
+          const col = i % 5;
+          const x = 340 + col * 16;
+          const y = 34 + row * 28;
+          const lit = i <= scanIdx;
+          const hot = i === scanIdx;
+          return (
+            <g key={i}>
+              <line x1="332" y1="48" x2={x - 6} y2={y} stroke="#1e293b" strokeWidth="0.5" />
+              <circle cx={x} cy={y} r="4.5" fill={lit ? '#fbbf24' : '#0f172a'} stroke={hot ? '#fde68a' : '#fbbf24'} strokeWidth={hot ? 1.2 : 0.6}
+                opacity={lit ? (hot ? 1 : 0.55) : 0.25}
+                style={hot ? { filter: 'drop-shadow(0 0 4px #fbbf24)' } : undefined} />
+              <text x={x} y={y + 14} textAnchor="middle" style={{ ...scStyles.mono, fontSize: 6.5, fill: '#475569' }}>
+                D{i}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* category histogram */}
+        <text x="20" y="138" style={{ ...scStyles.mono, fontSize: 8, fill: '#64748b', letterSpacing: '0.12em' }}>
+          ▸ CATEGORY_MAP
+        </text>
+        {categories.map((cat, i) => {
+          const y = 154 + i * 22;
+          return (
+            <g key={cat.label}>
+              <text x="20" y={y + 4} style={{ ...scStyles.mono, fontSize: 7.5, fill: cat.color, letterSpacing: '0.08em' }}>
+                {cat.label}
+              </text>
+              {Array.from({ length: 4 }).map((_, j) => (
+                <rect key={j} x={120 + j * 16} y={y - 6} width="10" height="10"
+                  fill={j < cat.bars ? cat.color : '#0f172a'}
+                  stroke={cat.color} strokeWidth="0.4" opacity={j < cat.bars ? 0.85 : 0.2} />
+              ))}
+            </g>
+          );
+        })}
+
+        {/* status rail */}
+        <line x1="20" y1="232" x2="440" y2="232" stroke="#1e293b" strokeWidth="0.5" />
+        <text x="20" y="244" style={{ ...scStyles.mono, fontSize: 8, fill: '#34d399' }}>
+          ◉ INTEGRITY: PASS
+        </text>
+        <text x="440" y="244" textAnchor="end" style={{ ...scStyles.mono, fontSize: 8, fill: '#64748b' }}>
+          SCAN {String(scanIdx + 1).padStart(2, '0')}/{String(count).padStart(2, '0')}
+        </text>
+      </svg>
+    </div>
+  );
+}
+
 // ─── Signal flow: animated packets moving between career modules ────────
 function SignalFlowShowpiece({ data }) {
   // Layout: 4 modules in a row, packets flow rightward between them
@@ -394,8 +491,8 @@ function SchematicSite({ data }) {
                 ['program', 'Mechatronics'],
                 ['year', '2021 — 2028'],
                 ['clocked in', '3 roles'],
-                ['awards', '5'],
-                ['certs', '5'],
+                ['honors', String(data.awards.length)],
+                ['decoder', 'U_HONORS'],
               ].map(([k, v]) => (
                 <div key={k}>
                   <div style={{ ...scStyles.mono, fontSize: 9, color: '#475569', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{k}</div>
@@ -419,9 +516,9 @@ function SchematicSite({ data }) {
         <ScSectionLabel num="04" title="tool_bus" sub="instruments & libraries" />
         <ScSkillsBus data={data} />
 
-        {/* Awards & certs */}
-        <ScSectionLabel num="05" title="credentials.dat" />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        {/* Awards & honor decoder */}
+        <ScSectionLabel num="05" title="credentials.dat" sub="honors register map" />
+        <div style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 14 }}>
           <div style={scStyles.chip}>
             <div style={scStyles.chipHead}>// honors</div>
             {data.awards.map((a, i) => (
@@ -431,15 +528,7 @@ function SchematicSite({ data }) {
               </div>
             ))}
           </div>
-          <div style={scStyles.chip}>
-            <div style={scStyles.chipHead}>// certifications</div>
-            {data.certifications.map((c, i) => (
-              <div key={i} style={{ fontSize: 13, color: '#cbd5e1', padding: '5px 0', borderBottom: '0.5px solid #1e293b', display: 'flex', gap: 10 }}>
-                <span style={{ color: '#34d399', ...scStyles.mono, fontSize: 10 }}>{String(i + 1).padStart(2, '0')}</span>
-                {c}
-              </div>
-            ))}
-          </div>
+          <HonorsSignalMap count={data.awards.length} />
         </div>
 
         {/* Contact */}
@@ -763,25 +852,18 @@ function SchematicResume({ data }) {
           ))}
         </div>
 
-        {/* Awards + certs grid */}
-        <ScSectionLabel num="§3" title="ratings" sub="awards & certifications" />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        {/* Awards register map */}
+        <ScSectionLabel num="§3" title="ratings" sub="awards register map" />
+        <div style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 14 }}>
           <div style={scStyles.chip}>
             <div style={scStyles.chipHead}>awards</div>
-            {data.awards.map(a => (
+            {data.awards.map((a, i) => (
               <div key={a} style={{ ...scStyles.mono, fontSize: 11.5, color: '#cbd5e1', padding: '5px 0', borderBottom: '0.5px dotted #1e293b' }}>
-                <span style={{ color: '#fbbf24' }}>◆</span> {a}
+                <span style={{ color: '#fbbf24' }}>{String(i + 1).padStart(2, '0')}</span> {a}
               </div>
             ))}
           </div>
-          <div style={scStyles.chip}>
-            <div style={scStyles.chipHead}>certs</div>
-            {data.certifications.map(c => (
-              <div key={c} style={{ ...scStyles.mono, fontSize: 11.5, color: '#cbd5e1', padding: '5px 0', borderBottom: '0.5px dotted #1e293b' }}>
-                <span style={{ color: '#34d399' }}>◆</span> {c}
-              </div>
-            ))}
-          </div>
+          <HonorsSignalMap count={data.awards.length} />
         </div>
 
         <ScSectionLabel num="§4" title="io_ports" />

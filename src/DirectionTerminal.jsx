@@ -171,7 +171,7 @@ function TerminalSite({ data }) {
 
         <SecHead num="04" title="./awards --list" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginLeft: 4 }}>
-          {[...data.awards, ...data.certifications].map((a, i) => (
+          {[...data.awards].map((a, i) => (
             <div key={i} style={{ color: '#aaa' }}>
               <span style={{ color: '#00ff9c' }}>✓ </span>{a}
             </div>
@@ -746,9 +746,9 @@ function TerminalResume({ data }) {
           ))}
         </ResumeSection>
 
-        <ResumeSection title="awards & certs">
+        <ResumeSection title="awards">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 12.5 }}>
-            {[...data.awards, ...data.certifications].map((a, i) => (
+            {[...data.awards].map((a, i) => (
               <div key={i} style={{ color: '#aaa' }}>
                 <span style={{ color: '#00ff9c' }}>◆</span> {a}
               </div>

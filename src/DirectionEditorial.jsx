@@ -198,7 +198,7 @@ function EditorialSite({ data }) {
             <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: '0.18em', color: '#8b3a1f', marginBottom: 14 }}>
               HONORS &amp; AWARDS
             </div>
-            {data.awards.map((a, i) => (
+            {data.awards.slice(0, 5).map((a, i) => (
               <div key={i} style={{ fontSize: 15, marginBottom: 10, display: 'flex', gap: 12 }}>
                 <span style={{ color: '#8b3a1f', fontFamily: "'Instrument Serif', serif", fontStyle: 'italic' }}>
                   {String(i + 1).padStart(2, '0')}
@@ -206,12 +206,20 @@ function EditorialSite({ data }) {
                 <span>{a}</span>
               </div>
             ))}
-            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: '0.18em', color: '#8b3a1f', margin: '28px 0 12px' }}>
-              CERTIFICATIONS
+            <div style={{ marginTop: 28, paddingTop: 20, borderTop: '0.5px solid #1a1a1a33' }}>
+              <blockquote style={{
+                fontFamily: "'Instrument Serif', serif", fontStyle: 'italic',
+                fontSize: 17, lineHeight: 1.45, color: '#1a1a1a', margin: 0,
+              }}>
+                “Teghveer was a breeze to work with... sharp questions, clear communication, and zero hand-holding required. Beyond his technical skills, he was genuinely a great teammate and showed a real drive that stood out.”
+              </blockquote>
+              <div style={{
+                fontFamily: "'IBM Plex Mono', monospace", fontStyle: 'normal', fontSize: 10,
+                letterSpacing: '0.18em', marginTop: 14, color: '#8b3a1f',
+              }}>
+                — VISHNU PRADEEP, SENIOR ENGINEER, EVERTZ
+              </div>
             </div>
-            {data.certifications.map((c, i) => (
-              <div key={i} style={{ fontSize: 13, color: '#444', marginBottom: 5 }}>— {c}</div>
-            ))}
           </div>
         </div>
 
@@ -748,9 +756,9 @@ function EditorialResume({ data }) {
           ))}
         </EdResumeSection>
 
-        <EdResumeSection title="Honors, Awards &amp; Certifications" num="III">
+        <EdResumeSection title="Honors &amp; Awards" num="III">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            {[...data.awards, ...data.certifications].map((a, i) => (
+            {[...data.awards].map((a, i) => (
               <div key={i} style={{ fontSize: 13.5, lineHeight: 1.5, color: '#333' }}>
                 <span style={{ color: '#8b3a1f' }}>§ </span>{a}
               </div>
@@ -761,8 +769,8 @@ function EditorialResume({ data }) {
         <EdResumeSection title="Correspondence" num="IV">
           <div style={{ fontSize: 14, lineHeight: 2 }}>
             <div><em style={{ color: '#666' }}>By wire:</em> <a href={`https://${data.links.linkedin}`} target="_blank" style={{ color: '#8b3a1f' }}>{data.links.linkedin}</a></div>
+            <div><em style={{ color: '#666' }}>By blog:</em> <a href={`https://${data.links.x}`} target="_blank" style={{ color: '#8b3a1f' }}>{data.links.x}</a></div>
             <div><em style={{ color: '#666' }}>By post:</em> {data.links.location}</div>
-            <div><em style={{ color: '#666' }}>By electronic mail:</em> {data.links.email}</div>
           </div>
         </EdResumeSection>
 
