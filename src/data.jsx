@@ -233,7 +233,7 @@ const RESUME = {
       period: 'Sep 2019 — Jun 2021',
       location: 'Winnipeg, MB',
       status: 'past',
-      tag: 'CLUB',
+      tag: 'ROBOTICS',
       color: '#06b6d4',
       oneLiner: 'Founded the robotics club from scratch — 10 members, two RC robots, Skills Manitoba.',
       stack: ['Leadership', 'Robotics'],
