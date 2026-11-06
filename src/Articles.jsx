@@ -84,7 +84,94 @@ function ArticleTable({ block, th }) {
   );
 }
 
+// Hugging Face and GitHub block iframing, so they render as live link cards
+// (stats fetched from their public APIs); the static HF Space demo is embedded.
+function RepoCard({ item, th }) {
+  const [info, setInfo] = React.useState(null);
+  const isHf = item.kind === 'hf';
+  React.useEffect(() => {
+    let dead = false;
+    const api = isHf ? `https://huggingface.co/api/models/${item.repo}` : `https://api.github.com/repos/${item.repo}`;
+    fetch(api).then(r => r.ok ? r.json() : null).then(j => { if (!dead) setInfo(j); }).catch(() => { });
+    return () => { dead = true; };
+  }, [item.repo]);
+
+  const stats = [];
+  if (info) {
+    if (isHf) {
+      if (info.pipeline_tag) stats.push(info.pipeline_tag);
+      if (info.base_model || info.cardData?.base_model) stats.push('base: ' + [].concat(info.base_model || info.cardData.base_model)[0]);
+      stats.push(`↓ ${info.downloads ?? 0}`, `♥ ${info.likes ?? 0}`);
+    } else {
+      if (info.language) stats.push(info.language);
+      stats.push(`★ ${info.stargazers_count}`, `⑂ ${info.forks_count}`);
+      if (info.pushed_at) stats.push('updated ' + info.pushed_at.slice(0, 10));
+    }
+  }
+  return (
+    <a href={item.url} target="_blank" rel="noopener noreferrer" style={{
+      display: 'block', textDecoration: 'none', padding: '16px 18px', background: th.panel,
+      border: `1px solid ${th.border}`, borderRadius: th.radius, color: th.fg,
+    }}>
+      <div style={{ fontFamily: th.monoFont, fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: th.accent, marginBottom: 6 }}>
+        {isHf ? 'Hugging Face · model' : 'GitHub · repository'} ↗
+      </div>
+      <div style={{ fontFamily: th.monoFont, fontSize: 14, color: th.strong, wordBreak: 'break-all', marginBottom: 6 }}>{item.repo}</div>
+      {info?.description && <div style={{ fontSize: 13, color: th.muted, lineHeight: 1.5, marginBottom: 6 }}>{info.description}</div>}
+      <div style={{ fontFamily: th.monoFont, fontSize: 11, color: th.muted, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+        {stats.length ? stats.map((s, i) => <span key={i}>{s}</span>) : <span>{info === null ? 'open link' : ''}</span>}
+      </div>
+    </a>
+  );
+}
+
+function DemoEmbed({ item, th }) {
+  const [loaded, setLoaded] = React.useState(false);
+  const [tall, setTall] = React.useState(false);
+  const [key, setKey] = React.useState(0);
+  const btn = {
+    background: 'transparent', border: `1px solid ${th.border}`, color: th.fg, cursor: 'pointer',
+    padding: '4px 9px', fontFamily: th.monoFont, fontSize: 11, borderRadius: th.radius, textDecoration: 'none',
+  };
+  return (
+    <div style={{ border: `1px solid ${th.border}`, background: th.panel, borderRadius: th.radius }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderBottom: loaded ? `1px solid ${th.border}` : 'none', flexWrap: 'wrap' }}>
+        <span style={{ fontFamily: th.monoFont, fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: th.accent }}>Demo · {item.title}</span>
+        <span style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+          {loaded && <button style={btn} onClick={() => setTall(t => !t)}>{tall ? 'shrink' : 'expand'}</button>}
+          {loaded && <button style={btn} onClick={() => setKey(k => k + 1)}>reload</button>}
+          <a style={btn} href={item.url} target="_blank" rel="noopener noreferrer">open ↗</a>
+        </span>
+      </div>
+      {loaded ? (
+        <iframe key={key} src={item.url} title={item.title} loading="lazy"
+          allow="clipboard-write" referrerPolicy="no-referrer"
+          style={{ display: 'block', width: '100%', height: tall ? 900 : 560, border: 0, background: '#fff' }} />
+      ) : (
+        <div style={{ padding: '28px 18px', textAlign: 'center' }}>
+          <button style={{ ...btn, padding: '10px 18px', fontSize: 12, color: th.accent, borderColor: th.accent }} onClick={() => setLoaded(true)}>
+            ▶ load interactive demo
+          </button>
+          <div style={{ fontFamily: th.monoFont, fontSize: 11, color: th.muted, marginTop: 10 }}>Loads from huggingface.co only when you click.</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ArticleBlock({ block, th }) {
+  if (block.t === 'embeds') {
+    const cards = block.items.filter(i => i.kind !== 'demo');
+    const demo = block.items.find(i => i.kind === 'demo');
+    return (
+      <div style={{ margin: '28px 0' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14, marginBottom: 14 }}>
+          {cards.map(c => <RepoCard key={c.url} item={c} th={th} />)}
+        </div>
+        {demo && <DemoEmbed item={demo} th={th} />}
+      </div>
+    );
+  }
   if (block.t === 'p') return <p style={{ margin: '0 0 1.1em' }}>{articleInline(block.text, th)}</p>;
   if (block.t === 'ul' || block.t === 'ol') {
     const Tag = block.t;

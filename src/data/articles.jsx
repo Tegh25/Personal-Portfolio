@@ -189,6 +189,11 @@ window.ARTICLES = [
         '**Base model:** Qwen3-4B-Instruct-2507, Apache 2.0',
         '**Teacher:** Claude Sonnet 5, accessed through the Backboard.io API. I am a Backboard campus ambassador, and Backboard granted $50 in credits that paid for the second half of the report generation.',
       ] },
+      { t: 'embeds', items: [
+        { kind: 'hf', repo: 'Tegh25/satellite-anomaly-reporter-qwen3-4b-lora', url: 'https://huggingface.co/Tegh25/satellite-anomaly-reporter-qwen3-4b-lora' },
+        { kind: 'github', repo: 'Tegh25/Satellite-Anomaly-Detector', url: 'https://github.com/Tegh25/Satellite-Anomaly-Detector' },
+        { kind: 'demo', url: 'https://tegh25-satellite-anomaly-reporter.static.hf.space', title: 'Live replay demo' },
+      ] },
       { t: 'callout', text: 'This is a passion project. The reports have not been reviewed by a spacecraft operator and should not be used to make operational decisions.' },
     ],
   },
