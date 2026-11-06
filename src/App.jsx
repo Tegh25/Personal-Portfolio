@@ -12,6 +12,7 @@ const VIEWS = [
   { id: 'site',    label: 'Personal Site',      hint: 'the full portfolio' },
   { id: 'cases',   label: 'Case Studies',       hint: 'deep-dive projects' },
   { id: 'resume',  label: 'Living Résumé',      hint: 'reimagined CV' },
+  { id: 'articles', label: 'Articles',          hint: 'write-ups & blog posts' },
 ];
 
 function App() {
@@ -46,7 +47,7 @@ function App() {
           <span className="dot"></span>
           <span>teghveer.portfolio</span>
           <span style={{ color: '#333', margin: '0 4px' }}>/</span>
-          <span style={{ color: '#666' }}>3 directions × 3 views</span>
+          <span style={{ color: '#666' }}>3 directions × 4 views</span>
         </div>
         <div className="direction-tabs">
           {DIRECTIONS.map(d => (
@@ -78,7 +79,9 @@ function App() {
       </div>
 
       <div className="stage" ref={stageRef} key={direction + view}>
-        <Component view={view} data={window.RESUME} />
+        {view === 'articles'
+          ? <window.ArticlesView direction={direction} />
+          : <Component view={view} data={window.RESUME} />}
       </div>
     </>
   );
